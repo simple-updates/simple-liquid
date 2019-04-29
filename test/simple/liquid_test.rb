@@ -49,4 +49,21 @@ class TestSimpleLiquid < Minitest::Test
       Simple::Liquid.render("{{ d | oops }}", @object)
     end
   end
+
+  it do
+    module MyPlusFilter
+      def my_plus(original, value)
+        original.to_i + value.to_i
+      end
+    end
+
+    assert_equal(
+      "2",
+      Simple::Liquid.render(
+        "{{ a | my_plus: 1 }}",
+        { a: 1 },
+        [MyPlusFilter]
+      )
+    )
+  end
 end

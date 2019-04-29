@@ -7,17 +7,18 @@ class Simple::Liquid
   class Error < RuntimeError
   end
 
-  VERSION = '1.0.0'
+  VERSION = '1.1.0'
 
-  attr_reader :template, :object
+  attr_reader :template, :object, :filters
 
-  def initialize(template, object = {})
+  def initialize(template, object = {}, filters = [])
     @template = template
     @object = deep_stringify_keys(object.to_h)
+    @filters = filters
   end
 
-  def self.render(template, object = {})
-    new(template, object).render
+  def self.render(template, object = {}, filters = [])
+    new(template, object, filters).render
   end
 
   def liquid_template
@@ -28,7 +29,8 @@ class Simple::Liquid
     liquid_template.render(
       object,
       strict_variables: true,
-      strict_filters: true
+      strict_filters: true,
+      filters: filters
     ).tap { raise_if_errors! }
   end
 
